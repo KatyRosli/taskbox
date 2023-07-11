@@ -2,27 +2,40 @@
 * A true app would be more complex and seperated into different files.
 */
 
-import { configureStore, createSlice } from "@reduxjs/toolkit";
+import { configureStore, createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 /*
  * The initial state of our store when the app loads.
  * Usually, you would fetch this from a server. Let's not worry about that now
  */
-const defaultTasks = [
-    { id: '1', title: 'Something', state: 'TASK_INBOX' },
-    { id: '2', title: 'Something more', state: 'TASK_INBOX' },
-    { id: '3', title: 'Something more', state: 'TASK_INBOX' },
-    { id: '4', title: 'Something more', state: 'TASK_INBOX' },
-];
+
 const TaskBoxData = {
-    tasks: defaultTasks,
+    tasks: [],
     status: 'idle',
     error: null,
 };
 
 /*
+ * Creates an asyncThunl to fetch tasks from a remote endpoint.
+ */
+
+export const fecthTasks = createAsyncThunk('todos/fetchTodos', async () => {
+    const response = await fetch(
+        'https://jsonplaceholder.typicode.com/todos?userId=1'
+    );
+    const data = await response.json();
+    const result = data.map((task) => ({
+        id: `${task.id}`,
+        title: task.title,
+        state: task.completed ? 'TASK_ARCHIVED' : 'TASK_INBOX',
+    }));
+    return result;
+});
+
+/*
  * The store is created here.
  */
+
 const TasksSlice = createSlice({
     name: 'tasksbox',
     initialState: TaskBoxData,
@@ -34,6 +47,29 @@ const TasksSlice = createSlice({
                 state.tasks[task].state = newTaskState;
             }
         },
+    },
+
+/*
+ * Extends the reducer for the async actions
+ */
+    extraReducers(builder) {
+        builder
+        .addCase(fetchTasks.pending, (state) => {
+            state.status = 'loading';
+            state.error = null;
+            state.tasks = [];
+        })
+        .addCase(fetchTasks.fulfilled, (state, action) => {
+            state.status = 'succeeded';
+            state.error = null;
+            //Add any fetched tasks to the array
+            state.tasks = action.payload;
+        })
+        .addCase(fetchTasks.rejected, (state) => {
+            state.status = 'failed';
+            state.error = 'Something went wrong';
+            state.tasks = [];
+        });
     },
 });
 

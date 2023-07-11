@@ -19,7 +19,7 @@ const TaskBoxData = {
  * Creates an asyncThunl to fetch tasks from a remote endpoint.
  */
 
-export const fecthTasks = createAsyncThunk('todos/fetchTodos', async () => {
+export const fetchTasks = createAsyncThunk('todos/fetchTodos', async () => {
     const response = await fetch(
         'https://jsonplaceholder.typicode.com/todos?userId=1'
     );

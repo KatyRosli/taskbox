@@ -42,7 +42,6 @@ const Mockstore = ({ taskboxState, children }) => (
     </Provider>
 );
 
-
 export default {
     component: TaskList,
     title: 'TaskList',

@@ -3,6 +3,7 @@ import store from '../lib/store';
 import { rest } from 'msw';
 import { MockedState } from './TaskList.stories';
 import { Provider } from 'react-redux';
+import { fireEvent, within, waitFor, waitForElementToBeRemoved, findByTestId } from '@storybook/testing-library';
 
 export default {
     component: InboxScreen,
@@ -23,6 +24,18 @@ export const Default = {
                 ),
             ],
         },
+    },
+    play: async ({ canvasElement }) => {
+        const canvas = within (canvasElement);
+        //Waits for the component to transition from the loading state
+        await waitForElementToBeRemoved(await canvas.findByTestId('loading'));
+        //Waits for the component to be updated based on the store
+        await waitFor(async () => {
+            //Stimulates pinning the first task
+            await fireEvent.click(canvas.getByLabelText('pinTask-1'));
+            //Stimulates pinning the third task
+            await fireEvent.click(canvas.getByLabelText('pinTask-3'));
+        });
     },
 };
 

@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 export default function Task({ task: { id, title, state }, onArchiveTask, onPinTask }) {
     return (
@@ -28,6 +27,7 @@ export default function Task({ task: { id, title, state }, onArchiveTask, onPinT
                 readOnly={true}
                 name='title'
                 placeholder='Input title'
+                style={{ background: 'red' }}
             />
             </label>
             {state !== 'TASK_ARCHIVED' && (
@@ -45,18 +45,3 @@ export default function Task({ task: { id, title, state }, onArchiveTask, onPinT
     );
 };
 
- Task.propTypes = {
-   /** Composition of the task */
-   task: PropTypes.shape({
-       /** Id of the task */
-       id: PropTypes.string.isRequired,
-       /** Title of the task */
-       title: PropTypes.string.isRequired,
-       /** Current state of the task */
-       state: PropTypes.string.isRequired,
- }),
- /** Event to change the task to archived */
- onArchiveTaskChange: PropTypes.func,
- /** Event to change the task to pinned */
- onPinTask: PropTypes.func,
- };
